@@ -1,0 +1,76 @@
+---
+import {
+  heroAvif as avif,
+  heroWebp as webp,
+  heroFallback as fallback,
+  heroImg,
+  heroSizes as sizes,
+} from '../lib/heroImage';
+import { hero } from '../data/content';
+---
+
+<section id="top" class="relative isolate overflow-hidden bg-surface-dark text-on-dark">
+  <!-- Photo: full-bleed on mobile, right ~55% on desktop -->
+  <div class="absolute inset-0 -z-10 lg:left-auto lg:w-[58%]">
+    <picture>
+      <source type="image/avif" srcset={avif.srcSet.attribute} sizes={sizes} />
+      <source type="image/webp" srcset={webp.srcSet.attribute} sizes={sizes} />
+      <img
+        src={fallback.src}
+        width={heroImg.width}
+        height={heroImg.height}
+        alt="A street of red-brick terraced houses at dusk"
+        fetchpriority="high"
+        decoding="async"
+        class="h-full w-full object-cover object-[60%_35%]"
+      />
+    </picture>
+    <!-- Mobile: wash the whole frame so text keeps contrast. Desktop: left-to-right fade into ink. -->
+    <div class="hero-scrim absolute inset-0"></div>
+  </div>
+
+  <div class="mx-auto flex min-h-svh max-w-7xl flex-col justify-end px-5 pt-28 pb-10 sm:px-8 sm:pt-36 lg:justify-center lg:px-12 lg:pb-16">
+    <div class="max-w-2xl">
+      <p class="eyebrow text-on-dark-accent">{hero.eyebrow}</p>
+      <h1 class="mt-6 font-display text-hero font-medium tracking-display text-balance">
+        {hero.headline}
+        <em class="block font-normal text-display-accent">{hero.headlineAccent}</em>
+      </h1>
+      <p class="mt-7 max-w-[34rem] text-lg text-on-dark-muted">{hero.body}</p>
+      <p class="mt-6 inline-flex items-center gap-3 rounded-sm border border-line-on-dark px-3.5 py-2 text-sm text-on-dark">
+        <span class="size-1.5 flex-none rounded-full bg-action" aria-hidden="true"></span>
+        {hero.qualifier}
+      </p>
+      <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+        <a href="#enquire" class="btn btn-primary">{hero.primaryCta} <span class="btn-arrow" aria-hidden="true">→</span></a>
+        <a href="#case-study" class="btn btn-ghost-dark">{hero.secondaryCta}</a>
+      </div>
+    </div>
+
+    <dl class="mt-14 grid max-w-3xl grid-cols-3 border-t border-line-on-dark">
+      {
+        hero.stats.map((s, i) => (
+          <div class:list={['pt-5 pr-3', i > 0 && 'border-l border-line-on-dark pl-4 sm:pl-6']}>
+            <dt class="sr-only">{s.label}</dt>
+            <dd class="font-display text-numeral font-medium tracking-tight">{s.value}</dd>
+            <dd class="mt-2 text-xs text-on-dark-muted sm:text-sm">{s.label}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>
+
+<style>
+  .hero-scrim {
+    background:
+      linear-gradient(to top, var(--color-surface-dark) 8%, color-mix(in oklab, var(--color-surface-dark) 84%, transparent) 50%, color-mix(in oklab, var(--color-surface-dark) 35%, transparent) 100%);
+  }
+  @media (min-width: 1024px) {
+    .hero-scrim {
+      background:
+        linear-gradient(to right, var(--color-surface-dark) 0%, color-mix(in oklab, var(--color-surface-dark) 60%, transparent) 35%, color-mix(in oklab, var(--color-surface-dark) 15%, transparent) 75%),
+        linear-gradient(to top, color-mix(in oklab, var(--color-surface-dark) 50%, transparent), transparent 40%);
+    }
+  }
+</style>

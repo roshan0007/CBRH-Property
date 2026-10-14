@@ -1,0 +1,56 @@
+---
+import { caseStudy } from '../data/content';
+---
+
+<section id="case-study" class="bg-surface-light py-24 sm:py-32">
+  <div class="mx-auto grid max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-2 lg:items-center lg:gap-20 lg:px-12">
+    <div data-reveal>
+      <p class="eyebrow text-accent-text">Case study</p>
+      <h2 class="mt-5 font-display text-section font-medium tracking-display text-balance">{caseStudy.heading}</h2>
+      <p class="mt-5 max-w-lg text-lg text-body-muted">{caseStudy.body}</p>
+      <a href={caseStudy.moreUrl} class="mt-8 inline-flex items-center gap-2 border-b border-body pb-1 font-semibold">
+        {caseStudy.moreLabel} <span aria-hidden="true">→</span>
+      </a>
+    </div>
+
+    <figure class="mx-auto w-full max-w-[22rem]" data-reveal>
+      <!-- Click-to-play facade: TikTok's player only loads after a click. -->
+      <div id="tiktok-facade" class="relative aspect-[9/16] overflow-hidden rounded-sm bg-surface-dark text-on-dark">
+        <button
+          type="button"
+          id="tiktok-play"
+          data-video-id={caseStudy.videoId}
+          class="group absolute inset-0 flex flex-col justify-between p-7 text-left">
+          <span class="eyebrow text-on-dark-accent">Watch the project</span>
+          <span class="font-display text-3xl font-medium tracking-display">
+            Before, during <em class="font-normal text-display-accent">and after.</em>
+          </span>
+          <span class="flex items-center gap-4">
+            <span class="flex size-16 items-center justify-center rounded-full bg-action text-on-action transition-transform duration-200 group-hover:scale-105">
+              <svg viewBox="0 0 24 24" class="ml-1 size-6" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"></path></svg>
+            </span>
+            <span class="text-sm text-on-dark-muted">Play video<span class="sr-only">: {caseStudy.heading}</span><br />Loads the TikTok player</span>
+          </span>
+        </button>
+      </div>
+      <figcaption class="mt-3 text-xs text-body-muted">
+        {caseStudy.caption} <a href={caseStudy.videoUrl} class="underline underline-offset-2">Open on TikTok</a>.
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<script>
+  const btn = document.getElementById('tiktok-play');
+  btn?.addEventListener('click', () => {
+    const id = btn.dataset.videoId;
+    const wrap = document.getElementById('tiktok-facade')!;
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.tiktok.com/player/v1/${id}?autoplay=1&rel=0`;
+    iframe.title = 'Hi-Ho case study video on TikTok';
+    iframe.allow = 'autoplay; encrypted-media; fullscreen; picture-in-picture';
+    iframe.className = 'absolute inset-0 h-full w-full border-0';
+    wrap.replaceChildren(iframe);
+    iframe.focus();
+  });
+</script>

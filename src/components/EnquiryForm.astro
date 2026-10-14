@@ -1,0 +1,373 @@
+---
+import { brand, form } from '../data/content';
+const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
+---
+
+<section id="enquire" class="bg-surface-paper py-20 sm:py-28">
+  <div class="mx-auto grid max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-20 lg:px-12">
+    <div class="lg:sticky lg:top-28 lg:self-start" data-reveal>
+      <p class="eyebrow text-accent-text">Investor enquiry</p>
+      <h2 class="mt-5 font-display text-section font-medium tracking-display text-balance">{form.heading}</h2>
+      <p class="mt-5 max-w-md text-lg text-body-muted">{form.body}</p>
+      <p class="mt-8 hidden max-w-md border-t border-line pt-6 text-sm text-body-muted lg:block">
+        Takes about a minute. No obligation, and we never share your details with third parties for marketing.
+      </p>
+    </div>
+
+    <div>
+      <form id="enquiry-form" class="space-y-12" novalidate data-sitekey={siteKey}>
+        {
+          form.questions.map((q, qi) => (
+            <fieldset class="enquiry-q" data-question={q.name}>
+              <legend class="flex items-baseline gap-3 text-lg font-semibold">
+                <span class="font-display text-xl font-normal text-accent-text italic">{qi + 1}.</span>
+                {q.legend}
+              </legend>
+              <div class="mt-5 grid gap-3 sm:grid-cols-2">
+                {q.options.map((o) => (
+                  <label class="radio-card">
+                    <input type="radio" name={q.name} value={o.value} required class="peer sr-only" />
+                    <span class="radio-dot" aria-hidden="true" />
+                    <span class="flex flex-col">
+                      <span class="font-medium">{o.label}</span>
+                      {o.hint && <span class="mt-0.5 text-sm text-body-muted">{o.hint}</span>}
+                    </span>
+                  </label>
+                ))}
+              </div>
+              <p class="field-error mt-3 hidden text-sm text-danger" id={`${q.name}-error`} role="alert" />
+            </fieldset>
+          ))
+        }
+
+        <fieldset class="space-y-6">
+          <legend class="flex items-baseline gap-3 text-lg font-semibold">
+            <span class="font-display text-xl font-normal text-accent-text italic">4.</span>
+            Your contact details
+          </legend>
+          <div class="field">
+            <label for="name">Full name</label>
+            <input id="name" name="name" type="text" autocomplete="name" required maxlength="120" aria-describedby="name-error" />
+            <p class="field-error hidden" id="name-error" role="alert"></p>
+          </div>
+          <div class="grid gap-6 sm:grid-cols-2">
+            <div class="field">
+              <label for="email">Email address</label>
+              <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required maxlength="200" aria-describedby="email-error" />
+              <p class="field-error hidden" id="email-error" role="alert"></p>
+            </div>
+            <div class="field">
+              <label for="phone">Phone number</label>
+              <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required maxlength="20" placeholder="07123 456789" aria-describedby="phone-error" />
+              <p class="field-error hidden" id="phone-error" role="alert"></p>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Honeypot: hidden from people, tempting to bots -->
+        <div class="absolute -left-[9999px]" aria-hidden="true">
+          <label for="company">Company</label>
+          <input id="company" name="company" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <div id="turnstile-slot"></div>
+
+        <div class="space-y-5">
+          <p id="form-status" class="hidden rounded-sm bg-surface-accent-tint px-4 py-3 text-sm text-body" role="alert"></p>
+          <button type="submit" class="btn btn-primary w-full sm:w-auto" id="enquiry-submit">
+            <span class="btn-label">{form.submit}</span>
+            <span class="btn-arrow" aria-hidden="true">→</span>
+          </button>
+          <p class="max-w-xl text-sm text-body-muted">
+            We’ll use your details only to respond to your enquiry and discuss suitable opportunities. See our <a
+              href={brand.privacyUrl}
+              class="font-medium text-body underline underline-offset-2">Privacy Policy</a
+            >.
+          </p>
+        </div>
+      </form>
+
+      <div id="enquiry-success" class="hidden border-t-2 border-action pt-8" tabindex="-1">
+        <p class="eyebrow text-accent-text">Enquiry received</p>
+        <h3 class="mt-4 font-display text-3xl font-medium tracking-display">Thank you. We’ll be in touch shortly.</h3>
+        <p class="mt-4 max-w-lg text-body-muted">
+          A member of the Hi-Ho team will contact you to book your qualification call. In the meantime, you can
+          <a href={brand.website} class="font-medium text-body underline underline-offset-2">learn more about Hi-Ho</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .radio-card {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    min-height: 3.75rem;
+    padding: 1rem 1.125rem;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius);
+    background-color: var(--color-surface-light);
+    cursor: pointer;
+    transition:
+      border-color 150ms var(--ease-out),
+      background-color 150ms var(--ease-out);
+  }
+  .radio-card:hover {
+    border-color: var(--color-line-strong);
+  }
+  .radio-card:has(input:checked) {
+    border-color: var(--color-selected);
+    background-color: var(--color-surface-paper);
+    box-shadow: inset 0 0 0 1px var(--color-selected); /* audit-ignore: doubles the border on select, not elevation */
+  }
+  .radio-card:has(input:focus-visible) {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  .radio-dot {
+    flex: none;
+    margin-top: 0.2rem;
+    width: 1.125rem;
+    height: 1.125rem;
+    border: 1.5px solid var(--color-line-strong);
+    border-radius: 50%;
+    transition: border-width 150ms var(--ease-out);
+  }
+  .radio-card:has(input:checked) .radio-dot {
+    border: 5px solid var(--color-selected);
+  }
+  .enquiry-q[data-invalid] .radio-card {
+    border-color: var(--color-danger);
+  }
+
+  .field label {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+  .field input {
+    margin-top: 0.5rem;
+    width: 100%;
+    min-height: 3.25rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface-paper);
+    color: var(--color-body);
+    font-size: var(--text-base);
+  }
+  .field input::placeholder {
+    color: var(--color-body-muted);
+    opacity: 0.7;
+  }
+  .field input:focus-visible {
+    outline-offset: 0;
+  }
+  .field input[aria-invalid='true'] {
+    border-color: var(--color-danger);
+  }
+  .field-error {
+    margin-top: 0.5rem;
+    font-size: var(--text-sm);
+    color: var(--color-danger);
+  }
+  #enquiry-submit[aria-busy='true'] {
+    opacity: 0.7;
+    cursor: progress;
+  }
+</style>
+
+<script>
+  import { track, getAttribution } from '../scripts/tracking';
+
+  const formEl = document.getElementById('enquiry-form') as HTMLFormElement | null;
+  const success = document.getElementById('enquiry-success');
+  const statusEl = document.getElementById('form-status')!;
+  const submitBtn = document.getElementById('enquiry-submit') as HTMLButtonElement;
+  const label = submitBtn?.querySelector('.btn-label');
+
+  // ---- Turnstile: loaded only when the form gets close, so it never costs LCP.
+  type TS = {
+    render: (el: HTMLElement, o: Record<string, unknown>) => string;
+    reset: (id: string) => void;
+  };
+  let tsToken = '';
+  let tsWidget = '';
+  let tsWaiters: ((t: string) => void)[] = [];
+  function loadTurnstile() {
+    if (document.getElementById('cf-turnstile-js') || !formEl) return;
+    (window as any).onTurnstileLoad = () => {
+      const ts = (window as any).turnstile as TS;
+      tsWidget = ts.render(document.getElementById('turnstile-slot')!, {
+        sitekey: formEl.dataset.sitekey,
+        appearance: 'interaction-only',
+        size: 'flexible',
+        callback: (t: string) => {
+          tsToken = t;
+          tsWaiters.forEach((w) => w(t));
+          tsWaiters = [];
+        },
+        'expired-callback': () => (tsToken = ''),
+      });
+    };
+    const s = document.createElement('script');
+    s.id = 'cf-turnstile-js';
+    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad';
+    s.async = true;
+    document.head.appendChild(s);
+  }
+  function getToken(timeoutMs = 8000): Promise<string> {
+    if (tsToken) return Promise.resolve(tsToken);
+    loadTurnstile();
+    return new Promise((resolve) => {
+      tsWaiters.push(resolve);
+      setTimeout(() => resolve(tsToken), timeoutMs);
+    });
+  }
+  if (formEl) {
+    // First touch of the form loads it; picking three answers gives it plenty
+    // of time to issue a token. Fallback: once the page has fully loaded and
+    // the form is actually on screen.
+    formEl.addEventListener('pointerdown', loadTurnstile, { once: true });
+    formEl.addEventListener('focusin', loadTurnstile, { once: true });
+    window.addEventListener('load', () =>
+      new IntersectionObserver(
+        (entries, io) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            setTimeout(loadTurnstile, 1500);
+            io.disconnect();
+          }
+        },
+        { threshold: 0.25 },
+      ).observe(formEl),
+    );
+  }
+
+  // ---- Validation
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  const normalisePhone = (v: string) => {
+    let d = v.replace(/[^\d+]/g, '');
+    if (d.startsWith('+44')) d = '0' + d.slice(3);
+    else if (d.startsWith('0044')) d = '0' + d.slice(4);
+    return d;
+  };
+  const ukPhoneOk = (v: string) => /^0\d{9,10}$/.test(normalisePhone(v));
+
+  function setFieldError(name: string, msg: string) {
+    const err = document.getElementById(`${name}-error`);
+    const input = formEl?.querySelector<HTMLInputElement>(`input[name="${name}"]`);
+    const fs = formEl?.querySelector<HTMLElement>(`[data-question="${name}"]`);
+    if (err) {
+      err.textContent = msg;
+      err.classList.toggle('hidden', !msg);
+    }
+    if (fs) fs.toggleAttribute('data-invalid', !!msg);
+    else if (input) input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+  }
+
+  function validate(fd: FormData) {
+    const errors: Record<string, string> = {};
+    if (!fd.get('budget')) errors.budget = 'Please choose your investment budget.';
+    if (!fd.get('timeline')) errors.timeline = 'Please tell us when you’re ready to invest.';
+    if (!fd.get('service')) errors.service = 'Please choose the service that interests you.';
+    const name = String(fd.get('name') || '').trim();
+    if (name.length < 2) errors.name = 'Please enter your full name.';
+    const email = String(fd.get('email') || '').trim();
+    if (!emailRe.test(email)) errors.email = 'Please enter a valid email address.';
+    const phone = String(fd.get('phone') || '').trim();
+    if (!ukPhoneOk(phone)) errors.phone = 'Please enter a UK phone number, e.g. 07123 456789.';
+    return errors;
+  }
+
+  // Inline: clear an error as soon as it's fixed, validate text fields on blur.
+  formEl?.addEventListener('change', (e) => {
+    const t = e.target as HTMLInputElement;
+    if (t.type === 'radio') setFieldError(t.name, '');
+  });
+  formEl?.querySelectorAll<HTMLInputElement>('.field input').forEach((input) => {
+    // Clear while typing, not on blur: removing the message on blur shifts the
+    // submit button mid-tap and the tap misses.
+    input.addEventListener('input', () => {
+      if (input.getAttribute('aria-invalid') !== 'true') return;
+      const errs = validate(new FormData(formEl));
+      if (!errs[input.name]) setFieldError(input.name, '');
+    });
+    input.addEventListener('blur', () => {
+      if (!input.value) return;
+      const errs = validate(new FormData(formEl));
+      setFieldError(input.name, errs[input.name] || '');
+    });
+  });
+
+  let busy = false;
+  formEl?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (busy) return;
+    statusEl.classList.add('hidden');
+
+    const fd = new FormData(formEl);
+    const errors = validate(fd);
+    ['budget', 'timeline', 'service', 'name', 'email', 'phone'].forEach((k) => setFieldError(k, errors[k] || ''));
+    const first = Object.keys(errors)[0];
+    if (first) {
+      const target =
+        formEl.querySelector<HTMLElement>(`input[name="${first}"]:not([type="radio"])`) ||
+        formEl.querySelector<HTMLElement>(`[data-question="${first}"] input`);
+      target?.focus();
+      target?.closest('fieldset')?.scrollIntoView({ block: 'center' });
+      return;
+    }
+
+    busy = true;
+    submitBtn.setAttribute('aria-busy', 'true');
+    submitBtn.disabled = true;
+    if (label) label.textContent = 'Sending…';
+
+    const eventId = crypto.randomUUID();
+    try {
+      const token = await getToken();
+      const res = await fetch('/api/enquiry', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          budget: fd.get('budget'),
+          timeline: fd.get('timeline'),
+          service: fd.get('service'),
+          name: fd.get('name'),
+          email: fd.get('email'),
+          phone: fd.get('phone'),
+          company: fd.get('company'),
+          turnstileToken: token,
+          eventId,
+          attribution: getAttribution(),
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) {
+        if (data.errors) Object.entries(data.errors).forEach(([k, v]) => setFieldError(k, String(v)));
+        throw new Error(data.message || 'Something went wrong. Please try again.');
+      }
+      track('Lead', eventId);
+      formEl.classList.add('hidden');
+      success?.classList.remove('hidden');
+      success?.focus();
+      document.dispatchEvent(new CustomEvent('enquiry:sent'));
+    } catch (err) {
+      statusEl.textContent =
+        (err as Error).message || 'Something went wrong. Please try again, or email hello@hihoinvestments.co.uk.';
+      statusEl.classList.remove('hidden');
+      if (tsWidget) {
+        tsToken = '';
+        ((window as any).turnstile as TS)?.reset(tsWidget);
+      }
+    } finally {
+      busy = false;
+      submitBtn.removeAttribute('aria-busy');
+      submitBtn.disabled = false;
+      if (label) label.textContent = 'Request an Investment Consultation';
+    }
+  });
+</script>

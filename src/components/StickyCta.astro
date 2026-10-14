@@ -1,0 +1,35 @@
+<div
+  id="sticky-cta"
+  class="fixed inset-x-0 bottom-0 z-30 translate-y-full border-t border-line-on-dark bg-surface-dark px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-raised transition-transform duration-300 data-[show]:translate-y-0 lg:hidden">
+  <a href="#enquire" class="btn btn-primary w-full" tabindex="-1">Request a Consultation <span class="btn-arrow" aria-hidden="true">→</span></a>
+</div>
+
+<script>
+  // Show after the hero; hide while the form is on screen or once it's sent.
+  const bar = document.getElementById('sticky-cta');
+  const link = bar?.querySelector('a');
+  const hero = document.getElementById('top');
+  const form = document.getElementById('enquire');
+  let pastHero = false;
+  let formVisible = false;
+  let sent = false;
+  const update = () => {
+    const show = pastHero && !formVisible && !sent;
+    bar?.toggleAttribute('data-show', show);
+    link?.setAttribute('tabindex', show ? '0' : '-1');
+  };
+  if (bar && hero && form) {
+    new IntersectionObserver(([e]) => {
+      pastHero = !e.isIntersecting;
+      update();
+    }).observe(hero);
+    new IntersectionObserver(([e]) => {
+      formVisible = e.isIntersecting;
+      update();
+    }).observe(form);
+    document.addEventListener('enquiry:sent', () => {
+      sent = true;
+      update();
+    });
+  }
+</script>

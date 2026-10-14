@@ -1,0 +1,23 @@
+---
+import { steps } from '../data/content';
+---
+
+<section id="how-it-works" class="bg-surface-light py-24 sm:py-32">
+  <div class="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
+    <div class="max-w-2xl" data-reveal>
+      <p class="eyebrow text-accent-text">How it works</p>
+      <h2 class="mt-5 font-display text-section font-medium tracking-display text-balance">Four steps, no pressure at any of them.</h2>
+    </div>
+    <ol class="mt-16 grid gap-0 border-t border-line md:grid-cols-4">
+      {
+        steps.map((s, i) => (
+          <li class="relative border-b border-line py-8 md:border-b-0 md:border-l md:px-7 md:py-10 md:first:border-l-0 md:first:pl-0" data-reveal>
+            <span class="font-display text-4xl font-normal text-accent-text italic">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="mt-5 text-lg font-semibold">{s.title}</h3>
+            <p class="mt-2 max-w-sm text-body-muted">{s.body}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>

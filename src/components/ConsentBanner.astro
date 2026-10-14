@@ -1,0 +1,38 @@
+---
+// Rendered only when a Pixel ID is configured: no tracking, no banner.
+const enabled = !!import.meta.env.PUBLIC_META_PIXEL_ID;
+---
+
+{
+  enabled && (
+    <div
+      id="consent"
+      role="region"
+      aria-label="Cookie preferences"
+      hidden
+      class="fixed inset-x-3 bottom-3 z-50 max-w-md rounded bg-surface-dark p-5 text-sm text-on-dark-muted shadow-raised sm:left-auto sm:right-6 sm:bottom-6">
+      <p>
+        We’d like to use a Meta cookie to measure how our ads perform. It stays off unless you accept.
+      </p>
+      <div class="mt-4 flex gap-3">
+        <button type="button" data-consent="granted" class="btn btn-primary min-h-11 flex-1 px-4">Accept</button>
+        <button type="button" data-consent="denied" class="btn btn-ghost-dark min-h-11 flex-1 px-4">Decline</button>
+      </div>
+    </div>
+  )
+}
+
+<script>
+  import { getConsent, setConsent, loadPixel, pixelEnabled } from '../scripts/tracking';
+  const el = document.getElementById('consent');
+  if (el && pixelEnabled()) {
+    if (getConsent() === null) el.hidden = false;
+    else loadPixel();
+    el.querySelectorAll<HTMLButtonElement>('[data-consent]').forEach((b) =>
+      b.addEventListener('click', () => {
+        setConsent(b.dataset.consent as 'granted' | 'denied');
+        el.hidden = true;
+      }),
+    );
+  }
+</script>

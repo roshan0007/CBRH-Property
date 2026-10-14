@@ -1,0 +1,36 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hiho-landing",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Astro builds to ./dist. The Worker only runs for /api/*; every other
+  // request is served straight from the static assets.
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
+  },
+
+  // Basic per-IP limit on enquiries: 5 per minute.
+  "ratelimits": [
+    { "name": "ENQUIRY_LIMITER", "namespace_id": "4201", "simple": { "limit": 5, "period": 60 } }
+  ],
+
+  // Optional email notification via Cloudflare Email Service.
+  // 1. npx wrangler email sending enable hihoinvestments.co.uk
+  // 2. uncomment the block below and set LEAD_NOTIFY_EMAIL + LEAD_FROM_EMAIL.
+  // "send_email": [{ "name": "EMAIL" }],
+
+  "vars": {
+    // Public, safe to commit. Swap for the real key before launch.
+    "TURNSTILE_SITE_KEY": "1x00000000000000000000AA",
+    "LEAD_NOTIFY_EMAIL": "",
+    "LEAD_FROM_EMAIL": ""
+  },
+  // Secrets (never commit): TURNSTILE_SECRET_KEY, LEAD_WEBHOOK_URL
+  //   npx wrangler secret put TURNSTILE_SECRET_KEY
+
+  "observability": { "enabled": true }
+}

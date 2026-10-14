@@ -1,0 +1,130 @@
+@import 'tailwindcss';
+@import './tokens.css';
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    /* Keep anchor targets clear of the sticky header */
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    background-color: var(--color-surface-paper);
+    color: var(--color-body);
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+
+  ::selection {
+    background-color: var(--color-action);
+    color: var(--color-on-action);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Display serif: optical size follows the rendered size */
+  .font-display {
+    font-optical-sizing: auto;
+  }
+
+  /* Tracked uppercase eyebrow with a short rule in front */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.875rem;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    word-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .eyebrow::before {
+    content: '';
+    width: 2.25rem;
+    height: 1px;
+    background-color: currentColor;
+    flex: none;
+  }
+
+  /* Buttons: one solid primary, one outline secondary */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-height: 3.25rem;
+    text-align: center;
+    padding: 0.875rem 1.625rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    line-height: 1.2;
+    text-decoration: none;
+    transition:
+      background-color 160ms var(--ease-out),
+      color 160ms var(--ease-out),
+      border-color 160ms var(--ease-out);
+  }
+  .btn-arrow {
+    transition: transform 200ms var(--ease-out);
+  }
+  .btn:hover .btn-arrow {
+    transform: translateX(3px);
+  }
+  .btn-primary {
+    background-color: var(--color-action);
+    color: var(--color-on-action);
+  }
+  .btn-primary:hover {
+    background-color: var(--color-action-hover);
+  }
+  .btn-ghost-dark {
+    border-color: var(--color-line-on-dark);
+    color: var(--color-on-dark);
+  }
+  .btn-ghost-dark:hover {
+    border-color: var(--color-on-dark);
+  }
+
+  /* Scroll-in reveal. Only hidden once JS has confirmed it can reveal it. */
+  .js [data-reveal] {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 700ms var(--ease-out),
+      transform 700ms var(--ease-out);
+  }
+  .js [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .js [data-reveal] {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}

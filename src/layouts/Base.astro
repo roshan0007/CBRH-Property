@@ -1,0 +1,104 @@
+---
+import '@fontsource-variable/newsreader/wght.css';
+import '@fontsource-variable/newsreader/wght-italic.css';
+import '@fontsource-variable/inter/wght.css';
+import '../styles/global.css';
+import serifUrl from '@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2?url';
+import sansUrl from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import { heroAvif, heroSizes } from '../lib/heroImage';
+import { brand, seo, faqs } from '../data/content';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const { title = seo.title, description = seo.description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL('/og.png', Astro.site).href;
+const allowIndexing = import.meta.env.PUBLIC_ALLOW_INDEXING === 'true';
+
+const orgLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: brand.name,
+  legalName: 'CBRH Property Ltd',
+  url: brand.website,
+  email: brand.email,
+  logo: new URL('/favicon.svg', Astro.site).href,
+  slogan: brand.tagline,
+  areaServed: 'Midlands, United Kingdom',
+};
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+};
+---
+
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {!allowIndexing && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#0b3029" /><!-- audit-ignore: meta tags cannot read CSS vars -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <link rel="preload" as="image" type="image/avif" imagesrcset={heroAvif.srcSet.attribute} imagesizes={heroSizes} fetchpriority="high" />
+    <link rel="preload" as="font" type="font/woff2" href={serifUrl} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={sansUrl} crossorigin />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={brand.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_GB" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(orgLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+  <body>
+    <a
+      href="#main"
+      class="sr-only z-50 rounded-sm bg-action px-4 py-3 font-semibold text-on-action focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+      >Skip to content</a
+    >
+    <slot />
+    <script>
+      import { captureAttribution } from '../scripts/tracking';
+      captureAttribution();
+
+      // Scroll-in reveal
+      const els = document.querySelectorAll<HTMLElement>('[data-reveal]');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) =>
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                e.target.classList.add('is-visible');
+                io.unobserve(e.target);
+              }
+            }),
+          { rootMargin: '0px 0px -8% 0px' },
+        );
+        els.forEach((el) => io.observe(el));
+      } else {
+        els.forEach((el) => el.classList.add('is-visible'));
+      }
+    </script>
+  </body>
+</html>
