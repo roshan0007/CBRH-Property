@@ -17,23 +17,14 @@ export const brand = {
 export const seo = {
   title: 'UK Property Investment, Made Hands-Off | Hi-Ho Investments',
   description:
-    'Property sourcing, renovation management and social housing handover for UK investors with £50,000+ to invest. Terraced and semi-detached homes across the Midlands.',
+    'Property sourcing, renovation management and social housing handover for UK property investors. Tell us your goals and the Hi-Ho team will be in touch.',
 };
 
 export const hero = {
-  eyebrow: 'Midlands property investment',
   headline: 'UK Property Investment,',
   headlineAccent: 'Made Hands-Off.',
   body: 'From sourcing the right property to renovation management and social housing handover, Hi-Ho helps investors navigate their property investment journey.',
-  qualifier: 'For investors with £50,000 or more ready to invest.',
   primaryCta: 'Explore Investment Opportunities',
-  secondaryCta: 'See a completed project',
-  // Suggested stats. Edit freely.
-  stats: [
-    { value: '£50k+', label: 'Minimum to get started' },
-    { value: 'Midlands', label: 'Terraced and semi-detached homes' },
-    { value: '5 yr+', label: 'Social housing rental arrangement' },
-  ],
 };
 
 export type Option = { value: string; label: string; hint?: string };

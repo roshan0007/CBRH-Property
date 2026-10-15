@@ -30,12 +30,9 @@ const overlay = Buffer.from(`
   </g>
   <text x="138" y="88" font-family="Georgia, serif" font-size="30" fill="${CREAM}">Hi-Ho</text>
   <text x="139" y="108" font-family="Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="3" fill="${CORAL}">INVESTMENTS</text>
-  <line x1="72" y1="262" x2="104" y2="262" stroke="${CORAL}" stroke-width="2"/>
-  <text x="118" y="268" font-family="Arial, sans-serif" font-size="16" font-weight="700" letter-spacing="4" fill="${CORAL}">MIDLANDS PROPERTY INVESTMENT</text>
   <text x="70" y="352" font-family="Georgia, serif" font-size="66" fill="${CREAM}">UK Property Investment,</text>
   <text x="70" y="432" font-family="Georgia, serif" font-size="66" font-style="italic" fill="${CORAL_LIGHT}">Made Hands-Off.</text>
   <text x="72" y="540" font-family="Arial, sans-serif" font-size="22" fill="#c4cec9">Sourcing · Renovation · Social housing handover</text>
-  <text x="72" y="574" font-family="Arial, sans-serif" font-size="18" fill="#c4cec9">For investors with £50,000+ ready to invest</text>
 </svg>`);
 
 await sharp({ create: { width: W, height: H, channels: 3, background: INK } })

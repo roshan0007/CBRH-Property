@@ -6,16 +6,17 @@ import '../styles/global.css';
 import serifUrl from '@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2?url';
 import sansUrl from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 import { heroAvif, heroSizes } from '../lib/heroImage';
-import { brand, seo, faqs } from '../data/content';
+import { brand, seo } from '../data/content';
 
 interface Props {
   title?: string;
   description?: string;
+  noindex?: boolean;
 }
-const { title = seo.title, description = seo.description } = Astro.props;
+const { title = seo.title, description = seo.description, noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = new URL('/og.png', Astro.site).href;
-const allowIndexing = import.meta.env.PUBLIC_ALLOW_INDEXING === 'true';
+const allowIndexing = import.meta.env.PUBLIC_ALLOW_INDEXING === 'true' && !noindex;
 
 const orgLd = {
   '@context': 'https://schema.org',
@@ -26,12 +27,7 @@ const orgLd = {
   email: brand.email,
   logo: new URL('/favicon.svg', Astro.site).href,
   slogan: brand.tagline,
-  areaServed: 'Midlands, United Kingdom',
-};
-const faqLd = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  areaServed: 'United Kingdom',
 };
 ---
 
@@ -47,7 +43,7 @@ const faqLd = {
     <meta name="theme-color" content="#0b3029" /><!-- audit-ignore: meta tags cannot read CSS vars -->
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
-    <link rel="preload" as="image" type="image/avif" imagesrcset={heroAvif.srcSet.attribute} imagesizes={heroSizes} fetchpriority="high" />
+    {Astro.url.pathname === '/' && <link rel="preload" as="image" type="image/avif" imagesrcset={heroAvif.srcSet.attribute} imagesizes={heroSizes} fetchpriority="high" />}
     <link rel="preload" as="font" type="font/woff2" href={serifUrl} crossorigin />
     <link rel="preload" as="font" type="font/woff2" href={sansUrl} crossorigin />
 
@@ -66,7 +62,6 @@ const faqLd = {
     <meta name="twitter:image" content={ogImage} />
 
     <script type="application/ld+json" set:html={JSON.stringify(orgLd)} />
-    <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
     <script is:inline>
       document.documentElement.classList.add('js');
     </script>

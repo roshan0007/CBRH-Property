@@ -31,33 +31,15 @@ import { hero } from '../data/content';
 
   <div class="mx-auto flex min-h-svh max-w-7xl flex-col justify-end px-5 pt-28 pb-10 sm:px-8 sm:pt-36 lg:justify-center lg:px-12 lg:pb-16">
     <div class="max-w-2xl">
-      <p class="eyebrow text-on-dark-accent">{hero.eyebrow}</p>
-      <h1 class="mt-6 font-display text-hero font-medium tracking-display text-balance">
+      <h1 class="font-display text-hero font-medium tracking-display text-balance">
         {hero.headline}
         <em class="block font-normal text-display-accent">{hero.headlineAccent}</em>
       </h1>
       <p class="mt-7 max-w-[34rem] text-lg text-on-dark-muted">{hero.body}</p>
-      <p class="mt-6 inline-flex items-center gap-3 rounded-sm border border-line-on-dark px-3.5 py-2 text-sm text-on-dark">
-        <span class="size-1.5 flex-none rounded-full bg-action" aria-hidden="true"></span>
-        {hero.qualifier}
-      </p>
       <div class="mt-9 flex flex-col gap-3 sm:flex-row">
         <a href="#enquire" class="btn btn-primary">{hero.primaryCta} <span class="btn-arrow" aria-hidden="true">→</span></a>
-        <a href="#case-study" class="btn btn-ghost-dark">{hero.secondaryCta}</a>
       </div>
     </div>
-
-    <dl class="mt-14 grid max-w-3xl grid-cols-3 border-t border-line-on-dark">
-      {
-        hero.stats.map((s, i) => (
-          <div class:list={['pt-5 pr-3', i > 0 && 'border-l border-line-on-dark pl-4 sm:pl-6']}>
-            <dt class="sr-only">{s.label}</dt>
-            <dd class="font-display text-numeral font-medium tracking-tight">{s.value}</dd>
-            <dd class="mt-2 text-xs text-on-dark-muted sm:text-sm">{s.label}</dd>
-          </div>
-        ))
-      }
-    </dl>
   </div>
 </section>
 

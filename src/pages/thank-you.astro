@@ -1,0 +1,52 @@
+---
+import Base from '../layouts/Base.astro';
+import Logo from '../components/Logo.astro';
+import Footer from '../components/Footer.astro';
+import ConsentBanner from '../components/ConsentBanner.astro';
+import { brand } from '../data/content';
+---
+
+<Base title="Thank you | Hi-Ho Investments" description="Your enquiry has been received." noindex>
+  <header class="border-b border-line-on-dark bg-surface-dark">
+    <div class="mx-auto flex h-16 max-w-7xl items-center px-5 sm:h-20 sm:px-8 lg:px-12">
+      <a href="/" class="rounded-sm" aria-label="Hi-Ho Investments, home"><Logo /></a>
+    </div>
+  </header>
+  <main id="main" class="min-h-[70svh] bg-surface-dark text-on-dark">
+    <section class="mx-auto max-w-7xl px-5 py-24 sm:px-8 sm:py-32 lg:px-12">
+      <div class="max-w-2xl">
+        <p class="eyebrow text-on-dark-accent">Enquiry received</p>
+        <h1 class="mt-6 font-display text-section font-medium tracking-display text-balance">
+          Thank you.
+          <em class="block font-normal text-display-accent">We’ll be in touch shortly.</em>
+        </h1>
+        <p class="mt-7 max-w-[34rem] text-lg text-on-dark-muted">
+          A member of the Hi-Ho team will contact you to book your qualification call. If you have a question in the
+          meantime, email <a href={`mailto:${brand.email}`} class="text-on-dark underline underline-offset-2">{brand.email}</a>.
+        </p>
+        <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+          <a href={brand.website} class="btn btn-primary">Learn more about Hi-Ho <span class="btn-arrow" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+  <ConsentBanner />
+</Base>
+
+<script>
+  import { loadPixel, track } from '../scripts/tracking';
+
+  // The form stores the Lead event id; fire it once, so a refresh doesn't count twice.
+  // loadPixel() is a no-op without a Pixel ID or consent.
+  try {
+    const id = sessionStorage.getItem('hiho-lead-event');
+    if (id) {
+      sessionStorage.removeItem('hiho-lead-event');
+      loadPixel();
+      track('Lead', id);
+    }
+  } catch {
+    /* storage blocked: nothing to fire */
+  }
+</script>

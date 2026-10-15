@@ -86,15 +86,6 @@ const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x0000000000000000
           </p>
         </div>
       </form>
-
-      <div id="enquiry-success" class="hidden border-t-2 border-action pt-8" tabindex="-1">
-        <p class="eyebrow text-accent-text">Enquiry received</p>
-        <h3 class="mt-4 font-display text-3xl font-medium tracking-display">Thank you. We’ll be in touch shortly.</h3>
-        <p class="mt-4 max-w-lg text-body-muted">
-          A member of the Hi-Ho team will contact you to book your qualification call. In the meantime, you can
-          <a href={brand.website} class="font-medium text-body underline underline-offset-2">learn more about Hi-Ho</a>.
-        </p>
-      </div>
     </div>
   </div>
 </section>
@@ -184,7 +175,6 @@ const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x0000000000000000
   import { track, getAttribution } from '../scripts/tracking';
 
   const formEl = document.getElementById('enquiry-form') as HTMLFormElement | null;
-  const success = document.getElementById('enquiry-success');
   const statusEl = document.getElementById('form-status')!;
   const submitBtn = document.getElementById('enquiry-submit') as HTMLButtonElement;
   const label = submitBtn?.querySelector('.btn-label');
@@ -303,6 +293,7 @@ const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x0000000000000000
   });
 
   let busy = false;
+  let sent = false;
   formEl?.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (busy) return;
@@ -350,11 +341,15 @@ const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x0000000000000000
         if (data.errors) Object.entries(data.errors).forEach(([k, v]) => setFieldError(k, String(v)));
         throw new Error(data.message || 'Something went wrong. Please try again.');
       }
-      track('Lead', eventId);
-      formEl.classList.add('hidden');
-      success?.classList.remove('hidden');
-      success?.focus();
+      // /thank-you fires the Pixel Lead with this id, so Meta can also use a URL rule.
+      try {
+        sessionStorage.setItem('hiho-lead-event', eventId);
+      } catch {
+        track('Lead', eventId);
+      }
       document.dispatchEvent(new CustomEvent('enquiry:sent'));
+      sent = true;
+      window.location.assign('/thank-you/');
     } catch (err) {
       statusEl.textContent =
         (err as Error).message || 'Something went wrong. Please try again, or email hello@hihoinvestments.co.uk.';
@@ -364,10 +359,13 @@ const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x0000000000000000
         ((window as any).turnstile as TS)?.reset(tsWidget);
       }
     } finally {
-      busy = false;
-      submitBtn.removeAttribute('aria-busy');
-      submitBtn.disabled = false;
-      if (label) label.textContent = 'Request an Investment Consultation';
+      // After a successful send the button stays busy while /thank-you loads.
+      if (!sent) {
+        busy = false;
+        submitBtn.removeAttribute('aria-busy');
+        submitBtn.disabled = false;
+        if (label) label.textContent = 'Request an Investment Consultation';
+      }
     }
   });
 </script>
